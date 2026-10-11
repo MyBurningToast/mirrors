@@ -1,0 +1,19 @@
+name: Mirror tick_studio
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync from GitLab
+        env:
+          MIRROR_PAT: ${{ secrets.TICK_STUDIO }}
+        run: |
+          git clone --bare https://gitlab.com/fanda8571/tick_studio.git src.git
+          cd src.git
+          git push --prune \
+            "https://x-access-token:${MIRROR_PAT}@github.com/MyBurningToast/tick_studio-mirror.git" \
+            '+refs/heads/*:refs/heads/*' '+refs/tags/*:refs/tags/*'
